@@ -35,3 +35,5 @@ HunterGate(
 )
 
 project(foo)
+
+hunter_add_package(sugar)
