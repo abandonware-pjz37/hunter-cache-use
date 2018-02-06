@@ -1,0 +1,42 @@
+# OSX/Linux (https://github.com/travis-ci-tester/toolchain-table)
+
+# Workaround for https://github.com/travis-ci/travis-ci/issues/8363
+language:
+  - minimal
+
+# Container-based infrastructure (Linux)
+# * https://docs.travis-ci.com/user/migrating-from-legacy/#How-can-I-use-container-based-infrastructure%3F
+sudo:
+  - false
+
+dist:
+  - trusty
+
+# Install packages differs for container-based infrastructure
+# * https://docs.travis-ci.com/user/migrating-from-legacy/#How-do-I-install-APT-sources-and-packages%3F
+addons:
+  apt:
+    packages:
+      - python3-pip
+
+env:
+  global:
+    - secure: "OVGj469eTgYJdKDPqhZICt91z8KGXwsE2smXdzVe5GY/J6qD5t08ZxcroTuYr8/OCIYOmJ3xXC9UnpW6ikViDR809z0KWlzdZTww8vFoJJKmLeq8d/35yw3TGIecnuBiJdtweBIJKBwvXy6suMoAxgt1JR7Ibmjh8MUJk6wmfUweCH8HlaZYGvAu29hov096Y/yxbJSB9qz6gbDU+udpHiDDYkdoVZ6ALZgPr97zSOFv825M+kQAk8lPBPKOTieEn6UAAWkMXi2N/e7mucr/jtbSnvATMyg/JYi3u7P2fbocSoTfF0zKGAOSiO3RHlJ25ovRVHgdq+G/tu+E/t5+YoTEaWCMIyBipo9ntZrPt2T9RFjhmx6INc69yg0rlh1x+VtmwNdkFGoexgIPJLYe/9OoL23btAJelcpNWQsr4WGoUO8N8oAiic0mXbLzNMPGD6cZpLhii7N7ZqlNQNI2zcurveQrsmK0nhinOO7SwCPamekjW7oe4i+lVMPTDod0vVYZJAQenWmymW+VCqlb//vnnFPsnQSP3h8cNowF38R0/g0WkdVF+/MNW2GaqxhnmEThcaNiVLIVoHEybMG30hBckQEVak3zj+yduIwavMY72Qdii2AMm4e9ryAl4z3Yt8CVRvjeS5qvYLvIAOA84UUmmXsYV2G+3XtqcX+790Y="
+
+
+matrix:
+  include:
+    - os: linux
+      env: TYPE=Debug
+    - os: linux
+      env: TYPE=Release
+
+script:
+  - cmake -H. -B_builds -DHUNTER_STATUS_DEBUG=ON -DCMAKE_BUILD_TYPE=${TYPE} -DHUNTER_CONFIGURATION_TYPES=${TYPE}
+  - cmake --build _builds
+
+# https://docs.travis-ci.com/user/customizing-the-build/#Whitelisting-or-blacklisting-branches
+# Exclude branch 'pkg.template'. Nothing to build there.
+branches:
+  except:
+    - /^pr\..*/

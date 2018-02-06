@@ -1,0 +1,27 @@
+# Windows (https://github.com/travis-ci-tester/toolchain-table)
+
+environment:
+  global:
+    GITHUB_USER_PASSWORD:
+      secure: 1NZhY5g6o/USU7QOCtY7dXF6YrRCyPR6xlBvXfi90taZLDxUkR0gygUBNpIutaQG
+
+  matrix:
+    - TYPE: Release
+    - TYPE: Debug
+
+install:
+  # Python 3
+  - cmd: set PATH=C:\Python34-x64;C:\Python34-x64\Scripts;%PATH%
+
+  # Install Python package 'requests'
+  - cmd: pip install requests
+
+build_script:
+  - cmd: cmake -H. -B_builds -DHUNTER_STATUS_DEBUG=ON -DHUNTER_CONFIGURATION_TYPES=%TYPE%
+  - cmd: cmake --build _builds --config %TYPE%
+
+# http://www.appveyor.com/docs/branches#white-and-blacklisting
+# Exclude branch 'pkg.template'. Nothing to build there.
+branches:
+  except:
+    - /^pr\..*/
